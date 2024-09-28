@@ -30,28 +30,53 @@
             <p>
               The github repository can be found 
               <a href="https://github.com/blathers16/static-cyoa-compressor">here.</a>
-              If you discover any issues with this program, you can file an issue here.
+              If you discover any issues with this program, you can file an issue there.
               Please avoid including any content in the issue which could
               violate GitHub TOS.
             </p>
+            <h3>Changelog</h3>
+            <h4>Version 1.0 (not released)</h4>
+            <ul>
+              <li>
+                Initial release
+              </li>
+            </ul>
+            <h4>Version 1.1 (9-28-2024)</h4>
+            <ul>
+              <li>
+                fixed issue with replacing file extensions
+              </li>
+            </ul>
           </ng-template>
         </div>
       </div>
     </div>
   </div>
   @if (clearPicker) {
+  <ng-template #fileTip class="fileTip">
+      Accepts a .zip file containing images.
+    </ng-template>
   <input
     class="form-control my-4"
     id="input"
     type="file"
+    [ngbTooltip]="fileTip"
+    tooltipClass="my-custom-class"
+    placement="start"
     (change)="process($event)"
     accept="application/zip"
     />
   } @else {
+  <ng-template #fileTip class="fileTip"><
+      Accepts a .zip file containing images.
+  </ng-template>
   <input
     class="form-control my-4"
     id="input"
     type="file"
+    [ngbTooltip]="fileTip"
+    placement="start"
+    tooltipClass="my-custom-class"
     (change)="process($event)"
     accept="application/zip"
   />

@@ -51,7 +51,7 @@ export class CompressorWorker implements DoWorkUnit<NamedFile, NamedFile> {
         b = blob;
       } else {
         let splitPath = nf.pathname.split('.');
-        splitPath[1] = 'webp';
+        splitPath[splitPath.length - 1] = 'webp';
         nf.pathname = splitPath.join('.');
       }
     } else {
@@ -64,7 +64,7 @@ export class CompressorWorker implements DoWorkUnit<NamedFile, NamedFile> {
         b = blob;
       } else {
         let splitPath = nf.pathname.split('.');
-        splitPath[1] = 'avif';
+        splitPath[splitPath.length - 1] = 'avif';
         nf.pathname = splitPath.join('.');
       }
     }

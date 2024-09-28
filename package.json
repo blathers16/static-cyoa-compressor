@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "npm run clean:assets && npm run copy:assets && ng serve",
+    "start": "npm run clean:assets && npm run copy:assets && ng serve -o",
     "build": "npm run clean:assets && npm run copy:assets && ng build",
     "watch": "npm run clean:assets && npm run copy:assets && ng build --watch",
     "serve": "npx http-server dist/static-cyoa-compressor",
