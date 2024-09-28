@@ -7,6 +7,33 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
+            <p>This program is designed for compressing
+              static (image) CYOAs, but it can be used to compress
+              any set of images.  The program takes a zip file as input,
+              and will compress all PNGs in the file into lossless WebPs.
+              Any other image formats in the file will be compressed into
+              high quality AVIF files.  Any non-image files in the zip File
+              will be returned as is.
+            </p>
+            <p>
+              This program will process images in parallel up to the number
+              of threads available on your processor - 1.  The progressbar should
+              show the number of completed files out of the total files in the zip
+              file.  Files not processed (non-image files) will show as completed
+              as soon as they are skipped.
+            </p>
+            <p>
+              If you are looking for a image viewer to view the compressed images
+              with, my recommendation is 
+              <a href="https://www.xnview.com/en/xnviewmp/">XnView MP</a>.
+            </p>
+            <p>
+              The github repository can be found 
+              <a href="https://github.com/blathers16/static-cyoa-compressor">here.</a>
+              If you discover any issues with this program, you can file an issue here.
+              Please avoid including any content in the issue which could
+              violate GitHub TOS.
+            </p>
           </ng-template>
         </div>
       </div>

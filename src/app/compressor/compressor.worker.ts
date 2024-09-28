@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
-import encode, { init as initWebPEncode } from '@jsquash/webp/encode';
+import webpencode, { init as initWebPEncode } from '@jsquash/webp/encode';
+import avifencode, { init as initAVIFEncode } from '@jsquash/avif/encode';
 
 import { DoWorkUnit, runWorker } from 'observable-webworker';
 import { Observable, from } from 'rxjs';
@@ -8,7 +9,12 @@ import { NamedFile } from '../models/named-file';
 
 initWebPEncode(undefined, {
   // Customise the path to load the wasm file
-  locateFile: (path: string, prefix: string) => './assets/wasm/webp_enc_wasm.wasm'
+  locateFile: (path: string, prefix: string) => './assets/wasm/webp_enc_simd.wasm'
+});
+
+initAVIFEncode(undefined, {
+  // Customise the path to load the wasm file
+  locateFile: (path: string, prefix: string) => './assets/wasm/avif_enc.wasm'
 });
 
 export class CompressorWorker implements DoWorkUnit<NamedFile, NamedFile> {
@@ -19,23 +25,48 @@ export class CompressorWorker implements DoWorkUnit<NamedFile, NamedFile> {
     const blob = new Blob([nf.file])
     // const outfile = new File([blob], infile.name, { type: infile.type });
     // convert to imageData for avif encoder
-    const image = await createImageBitmap(blob);
+    let image;
+    // if it isn't an image return the file unchanged
+    try {
+      image = await createImageBitmap(blob);
+    } catch (e) {
+      return nf;
+    }
     const canvas = new OffscreenCanvas(image.width, image.height);
     const ctx = canvas.getContext('2d');
     ctx!.drawImage(image, 0 ,0, image.width, image.height);
     const imageData = ctx!.getImageData(0, 0, image.width, image.height);
+    
+    let b: Blob;
+    // compress pngs to lossless webp, other (presumably lossy)
+    // formats to high quality avif
+    // we are relying on extension here
+    if (nf.pathname.endsWith('.png')){
 
-    const webPBuffer = await encode(imageData!, {quality: 80, lossless: 1});
+      const webPBuffer = await webpencode(imageData!, {quality: 80, lossless: 1});;
 
-    let b = new Blob([webPBuffer])
-    // let f = new File([b], nf.pathname, { type: 'image/webp' })
+      b = new Blob([webPBuffer]);
 
-    if (blob.size < b.size) {
-      b = blob;
+      if (blob.size < b.size) {
+        b = blob;
+      } else {
+        let splitPath = nf.pathname.split('.');
+        splitPath[1] = 'webp';
+        nf.pathname = splitPath.join('.');
+      }
     } else {
-      let splitPath = nf.pathname.split('.');
-      splitPath[1] = 'webp';
-      nf.pathname = splitPath.join('.');
+
+      const avifBuffer = await avifencode(imageData!, {cqLevel: 20})
+
+      b = new Blob([avifBuffer]);
+
+      if (blob.size < b.size) {
+        b = blob;
+      } else {
+        let splitPath = nf.pathname.split('.');
+        splitPath[1] = 'avif';
+        nf.pathname = splitPath.join('.');
+      }
     }
 
     const buffer = await b.arrayBuffer()

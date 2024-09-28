@@ -77,8 +77,8 @@ export class CompressorComponent {
     );
   }
 
-  isfileWebP(fileName: string) {
-    return fileName.endsWith('.webp');
+  isfileWebPOrAVIF(fileName: string) {
+    return fileName.endsWith('.webp') || fileName.endsWith('.avif');
   }
 
   stripLeadingZeros(s: string): string {
@@ -160,7 +160,7 @@ export class CompressorComponent {
         .pipe(
           // update progressbar
           // also update progress for WebPs that were already in the CYOA
-          tap((x: NamedFile) => this.isfileWebP(x.pathname) ? this.progress++ : null),
+          tap((x: NamedFile) => this.isfileWebPOrAVIF(x.pathname) ? this.progress++ : null),
           // collect all the results together into one array
           reduce(
             (acc: NamedFile[], value: NamedFile): NamedFile[] => [
